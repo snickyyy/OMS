@@ -3,3 +3,9 @@ spring:
     name: oms
   config:
     import: optional:file:.env
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
