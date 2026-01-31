@@ -1,0 +1,12 @@
+services:
+  oms-service:
+    restart: on-failure
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    ports:
+      - "${PORT}:8080"
+    mem_limit: "${MEM_LIMIT}"
+    cpus: "${CPUS}"
