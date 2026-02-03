@@ -20,5 +20,13 @@ public enum OrderStatus {
     /**
      * Failed during processing.
      */
-    FAILED,
+    FAILED;
+
+    public boolean canTransitionTo(OrderStatus next) {
+        return switch (this) {
+            case PENDING -> next == PAID || next == FAILED || next == CANCELLED;
+            case PAID -> next == COMPLETED || next == CANCELLED || next == FAILED;
+            case CANCELLED, COMPLETED, FAILED -> false; // Terminal states
+        };
+    }
 }
