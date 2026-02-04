@@ -1,12 +1,14 @@
 package sc.snicky.oms.domain.models.values;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import sc.snicky.oms.domain.exceptions.BusinessRuleException;
 import sc.snicky.oms.domain.exceptions.ValidationRuleException;
 import sc.snicky.oms.domain.exceptions.codes.MoneyErrorCode;
 
 @Getter
-public class Money {
+@EqualsAndHashCode
+public final class Money {
     private static final int CURRENCY_CODE_LENGTH = 3;
 
     private final long amount;
