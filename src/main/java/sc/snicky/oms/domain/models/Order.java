@@ -1,6 +1,7 @@
 package sc.snicky.oms.domain.models;
 
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import sc.snicky.oms.domain.exceptions.BusinessRuleException;
 import sc.snicky.oms.domain.exceptions.codes.OrderErrorCode;
@@ -13,6 +14,7 @@ import sc.snicky.oms.domain.models.values.order.OrderStatus;
 import java.util.Objects;
 
 @Getter
+@EqualsAndHashCode
 public class Order {
     private final OrderId id;
     private final OrderNumber orderNumber;

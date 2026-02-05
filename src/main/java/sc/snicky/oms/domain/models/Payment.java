@@ -1,6 +1,7 @@
 package sc.snicky.oms.domain.models;
 
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import sc.snicky.oms.domain.models.values.Money;
 import sc.snicky.oms.domain.models.values.order.OrderId;
@@ -12,6 +13,7 @@ import sc.snicky.oms.domain.models.values.payments.TransactionId;
 import java.util.Objects;
 
 @Getter
+@EqualsAndHashCode
 public class Payment {
     private final PaymentId id;
     private final TransactionId transactionId;
