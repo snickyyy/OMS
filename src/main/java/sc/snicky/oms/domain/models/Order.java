@@ -14,8 +14,9 @@ import sc.snicky.oms.domain.models.values.order.OrderStatus;
 import java.util.Objects;
 
 @Getter
-@EqualsAndHashCode
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Order {
+    @EqualsAndHashCode.Include
     private final OrderId id;
     private final OrderNumber orderNumber;
     private final CustomerId customerId;
@@ -30,13 +31,25 @@ public class Order {
     private Money total;
 
     @Builder
-    public Order(OrderId id, OrderNumber orderNumber, CustomerId customerId, Money initialTotal) {
+    private Order(OrderId id, OrderNumber orderNumber, CustomerId customerId, Money initialTotal) {
         this.id = Objects.requireNonNull(id, "OrderId is required");
         this.orderNumber = Objects.requireNonNull(orderNumber, "OrderNumber is required");
         this.customerId = Objects.requireNonNull(customerId, "CustomerId is required");
         this.total = Objects.requireNonNull(initialTotal, "Initial total is required");
 
         this.status = OrderStatus.PENDING;
+    }
+
+    /**
+     * Restores an `Order` entity from the database or another persistent storage.
+     * This method is used to recreate an `Order` object with all its attributes,
+     * including its current status.
+     */
+    public static Order restore(OrderId id, OrderNumber orderNumber, CustomerId customerId,
+                                Money total, OrderStatus status) {
+        Order o = new Order(id, orderNumber, customerId, total);
+        o.status = status;
+        return o;
     }
 
     public void markAsPaid() {
