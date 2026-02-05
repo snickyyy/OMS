@@ -1,6 +1,8 @@
 package sc.snicky.oms.domain.models.values.order;
 
-public enum OrderStatus {
+import sc.snicky.oms.domain.models.values.StatusValueObject;
+
+public enum OrderStatus implements StatusValueObject<OrderStatus> {
     /**
      * Packed and awaiting payment; cancellable.
      */
