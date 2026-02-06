@@ -12,7 +12,7 @@ public class PaymentId extends BaseValueObject<String> {
 
     @Override
     public void validate() {
-        if (getValue() == null || getValue().isEmpty()) {
+        if (getValue() == null || getValue().trim().isEmpty()) {
             throw new ValidationRuleException(
                     "Payment ID cannot be null or empty",
                     PaymentErrorCode.PAYMENT_ID_EMPTY_OR_NULL.name()

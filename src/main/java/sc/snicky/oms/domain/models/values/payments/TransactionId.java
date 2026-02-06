@@ -13,13 +13,13 @@ public class TransactionId extends BaseValueObject<String> {
 
     @Override
     public void validate() {
-        if (getValue() == null || getValue().isEmpty()) {
+        if (getValue() == null || getValue().trim().isEmpty()) {
             throw new ValidationRuleException(
                     "Transaction ID cannot be null or empty",
                     PaymentErrorCode.PAYMENT_TRANSACTION_ID_EMPTY_OR_NULL.name()
             );
         }
-        if (getValue().length() != MAX_LENGTH) {
+        if (getValue().trim().length() != MAX_LENGTH) {
             throw new ValidationRuleException(
                     "Transaction ID must be exactly " + MAX_LENGTH + " characters",
                     PaymentErrorCode.PAYMENT_TRANSACTION_ID_INVALID_LENGTH.name()

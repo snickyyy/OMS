@@ -13,13 +13,13 @@ public class CustomerId extends BaseValueObject<String> {
 
     @Override
     public void validate() {
-        if (getValue() == null || getValue().isEmpty()) {
+        if (getValue() == null || getValue().trim().isEmpty()) {
             throw new ValidationRuleException(
                     "Customer ID cannot be null or empty",
                     OrderErrorCode.CUSTOMER_ID_EMPTY_OR_NULL.name()
             );
         }
-        if (getValue().length() > MAX_LENGTH) {
+        if (getValue().trim().length() > MAX_LENGTH) {
             throw new ValidationRuleException(
                     "Customer ID cannot exceed " + MAX_LENGTH + " characters",
                     OrderErrorCode.CUSTOMER_ID_INVALID_LENGTH.name()

@@ -13,7 +13,7 @@ public class OrderId extends BaseValueObject<String> {
 
     @Override
     public void validate() {
-        if (getValue() == null || getValue().isEmpty()) {
+        if (getValue() == null || getValue().trim().isEmpty()) {
             throw new ValidationRuleException(
                     "Order ID cannot be null or empty",
                     OrderErrorCode.ORDER_ID_EMPTY_OR_NULL.name()

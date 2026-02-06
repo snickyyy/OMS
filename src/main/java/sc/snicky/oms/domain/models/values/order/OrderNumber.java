@@ -13,13 +13,13 @@ public class OrderNumber extends BaseValueObject<String> {
 
     @Override
     public void validate() {
-        if (getValue() == null || getValue().isEmpty()) {
+        if (getValue() == null || getValue().trim().isEmpty()) {
             throw new ValidationRuleException(
                     "Order number cannot be null or empty",
                     OrderErrorCode.ORDER_NUMBER_EMPTY_OR_NULL.name()
             );
         }
-        if (getValue().length() != LENGTH) {
+        if (getValue().trim().length() != LENGTH) {
             throw new ValidationRuleException(
                     "Order number must be exactly " + LENGTH + " characters long",
                     OrderErrorCode.ORDER_NUMBER_INVALID_LENGTH.name()
