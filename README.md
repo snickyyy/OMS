@@ -52,6 +52,28 @@ The project is built according to the principles of:
 
 ---
 
+## Domain Model: Entities and Value Objects
+
+The domain layer is split into **entities** and **value objects**:
+
+- **Entities** (`domain/models`)  
+  Represent core business concepts with a stable identity, such as orders and payments.  
+  Typical examples in this service:
+    - `Order` – aggregate root that encapsulates the full lifecycle of an order: creation, status transitions, items and
+      totals.
+    - `Payment` – represents a payment attempt/transaction linked to an order, including its current status and audit
+      data.
+    - Supporting entities (e.g. `OrderItem`) – describe parts of an aggregate but still carry their own business rules.
+
+- **Value Objects** (`domain/models/values`)  
+  Immutable objects that describe *attributes* of the domain with built-in validation and invariants.  
+  Typical examples:
+    - `Money` – amount and currency with safe arithmetic and comparison rules.
+    - `OrderId`, `PaymentId` – strongly-typed identifiers instead of raw primitives.
+    - Other small concepts like statuses, email addresses or customer references.
+
+---
+
 ## Configuration
 
 **Spring Profiles** are used for different environments:
