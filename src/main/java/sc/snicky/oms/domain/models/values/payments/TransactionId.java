@@ -19,9 +19,9 @@ public class TransactionId extends BaseValueObject<String> {
                     PaymentErrorCode.PAYMENT_TRANSACTION_ID_EMPTY_OR_NULL.name()
             );
         }
-        if (getValue().trim().length() != MAX_LENGTH) {
+        if (getValue().trim().length() > MAX_LENGTH) {
             throw new ValidationRuleException(
-                    "Transaction ID must be exactly " + MAX_LENGTH + " characters",
+                    "Transaction ID cannot exceed " + MAX_LENGTH + " characters",
                     PaymentErrorCode.PAYMENT_TRANSACTION_ID_INVALID_LENGTH.name()
             );
         }
