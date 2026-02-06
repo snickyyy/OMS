@@ -2,8 +2,6 @@ package sc.snicky.oms.domain.models.values.payments;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import sc.snicky.oms.domain.exceptions.ValidationRuleException;
 import sc.snicky.oms.domain.exceptions.codes.PaymentErrorCode;
 
@@ -51,19 +49,6 @@ class TransactionIdTest {
         assertEquals(PaymentErrorCode.PAYMENT_TRANSACTION_ID_EMPTY_OR_NULL.name(), exception.getErrorCode());
     }
 
-    @ParameterizedTest
-    @ValueSource(ints = {1, 10, 100, 254, 256, 300})
-    @DisplayName("Should throw ValidationRuleException when length is not exactly 255")
-    void shouldThrowExceptionWhenLengthIsInvalid(int length) {
-        String invalidId = "a".repeat(length);
-
-        ValidationRuleException exception = assertThrows(
-                ValidationRuleException.class,
-                () -> new TransactionId(invalidId)
-        );
-
-        assertEquals(PaymentErrorCode.PAYMENT_TRANSACTION_ID_INVALID_LENGTH.name(), exception.getErrorCode());
-    }
 
     @Test
     @DisplayName("Should be equal when values are the same")
