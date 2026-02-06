@@ -5,7 +5,6 @@ import sc.snicky.oms.domain.exceptions.codes.OrderErrorCode;
 import sc.snicky.oms.domain.models.values.BaseValueObject;
 
 public class OrderId extends BaseValueObject<String> {
-    private static final int MAX_LENGTH = 255;
 
     public OrderId(String value) {
         super(value);
