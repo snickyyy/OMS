@@ -37,7 +37,6 @@ class TransactionIdTest {
                 () -> new TransactionId(null)
         );
 
-        assertEquals("Transaction ID cannot be null or empty", exception.getMessage());
         assertEquals(PaymentErrorCode.PAYMENT_TRANSACTION_ID_EMPTY_OR_NULL.name(), exception.getErrorCode());
     }
 
@@ -49,7 +48,6 @@ class TransactionIdTest {
                 () -> new TransactionId("")
         );
 
-        assertEquals("Transaction ID cannot be null or empty", exception.getMessage());
         assertEquals(PaymentErrorCode.PAYMENT_TRANSACTION_ID_EMPTY_OR_NULL.name(), exception.getErrorCode());
     }
 
@@ -64,7 +62,6 @@ class TransactionIdTest {
                 () -> new TransactionId(invalidId)
         );
 
-        assertEquals("Transaction ID must be exactly " + MAX_LENGTH + " characters", exception.getMessage());
         assertEquals(PaymentErrorCode.PAYMENT_TRANSACTION_ID_INVALID_LENGTH.name(), exception.getErrorCode());
     }
 

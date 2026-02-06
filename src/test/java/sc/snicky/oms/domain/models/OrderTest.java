@@ -118,178 +118,120 @@ class OrderTest {
             );
         }
 
-        // ### NPE messages ######################################################
+        // ### markAsPaid ######################################################
 
-        @Test
-        @DisplayName("NPE for missing id contains meaningful message")
-        void npeForIdHasMessage() {
-            var ex = assertThrows(NullPointerException.class, () ->
-                    Order.builder()
-                            .id(null)
-                            .orderNumber(new OrderNumber("123456789-1234567890"))
-                            .customerId(new CustomerId(UUID.randomUUID().toString()))
-                            .initialTotal(new Money(100_00, "PLN"))
-                            .build()
-            );
-            assertEquals("OrderId is required", ex.getMessage());
+        @Nested
+        @DisplayName("markAsPaid()")
+        class MarkAsPaid {
+
+            @Test
+            @DisplayName("transitions PENDING -> PAID")
+            void transitionsPendingToPaid() {
+                Order order = buildOrder(); // PENDING
+
+                order.markAsPaid();
+
+                assertEquals(OrderStatus.PAID, order.getStatus());
+            }
+
+            @Test
+            @DisplayName("throws BusinessRuleException when already PAID")
+            void throwsWhenAlreadyPaid() {
+                Order order = buildOrder();
+                order.markAsPaid(); // PAID
+
+                var ex = assertThrows(BusinessRuleException.class, order::markAsPaid);
+
+                assertEquals(OrderErrorCode.ORDER_STATUS_INVALID_TRANSITION.name(), ex.getErrorCode());
+                assertTrue(ex.getMessage().contains("PAID"));
+            }
+
+            @Test
+            @DisplayName("throws BusinessRuleException when already COMPLETED")
+            void throwsWhenCompleted() {
+                Order order = buildOrder();
+                order.markAsPaid();
+                order.markAsCompleted(); // COMPLETED
+
+                var ex = assertThrows(BusinessRuleException.class, order::markAsPaid);
+
+                assertEquals(OrderErrorCode.ORDER_STATUS_INVALID_TRANSITION.name(), ex.getErrorCode());
+            }
         }
 
-        @Test
-        @DisplayName("NPE for missing orderNumber contains meaningful message")
-        void npeForOrderNumberHasMessage() {
-            var ex = assertThrows(NullPointerException.class, () ->
-                    Order.builder()
-                            .id(new OrderId(UUID.randomUUID().toString()))
-                            .orderNumber(null)
-                            .customerId(new CustomerId(UUID.randomUUID().toString()))
-                            .initialTotal(new Money(100_00, "PLN"))
-                            .build()
-            );
-            assertEquals("OrderNumber is required", ex.getMessage());
+        // ### markAsCompleted ######################################################
+
+        @Nested
+        @DisplayName("markAsCompleted()")
+        class MarkAsCompleted {
+
+            @Test
+            @DisplayName("transitions PAID -> COMPLETED")
+            void transitionsPaidToCompleted() {
+                Order order = buildOrder();
+                order.markAsPaid(); // PAID
+
+                order.markAsCompleted();
+
+                assertEquals(OrderStatus.COMPLETED, order.getStatus());
+            }
+
+            @Test
+            @DisplayName("throws BusinessRuleException when still PENDING")
+            void throwsWhenPending() {
+                Order order = buildOrder(); // PENDING
+
+                var ex = assertThrows(BusinessRuleException.class, order::markAsCompleted);
+
+                assertEquals(OrderErrorCode.ORDER_STATUS_INVALID_TRANSITION.name(), ex.getErrorCode());
+                assertTrue(ex.getMessage().contains("PENDING"));
+                assertTrue(ex.getMessage().contains("COMPLETED"));
+            }
+
+            @Test
+            @DisplayName("throws BusinessRuleException when already COMPLETED")
+            void throwsWhenAlreadyCompleted() {
+                Order order = buildOrder();
+                order.markAsPaid();
+                order.markAsCompleted(); // COMPLETED
+
+                var ex = assertThrows(BusinessRuleException.class, order::markAsCompleted);
+
+                assertEquals(OrderErrorCode.ORDER_STATUS_INVALID_TRANSITION.name(), ex.getErrorCode());
+            }
         }
 
-        @Test
-        @DisplayName("NPE for missing customerId contains meaningful message")
-        void npeForCustomerIdHasMessage() {
-            var ex = assertThrows(NullPointerException.class, () ->
-                    Order.builder()
-                            .id(new OrderId(UUID.randomUUID().toString()))
-                            .orderNumber(new OrderNumber("123456789-1234567890"))
-                            .customerId(null)
-                            .initialTotal(new Money(100_00, "PLN"))
-                            .build()
-            );
-            assertEquals("CustomerId is required", ex.getMessage());
-        }
+        // ### full lifecycle ######################################################
 
-        @Test
-        @DisplayName("NPE for missing initialTotal contains meaningful message")
-        void npeForInitialTotalHasMessage() {
-            var ex = assertThrows(NullPointerException.class, () ->
-                    Order.builder()
-                            .id(new OrderId(UUID.randomUUID().toString()))
-                            .orderNumber(new OrderNumber("123456789-1234567890"))
-                            .customerId(new CustomerId(UUID.randomUUID().toString()))
-                            .initialTotal(null)
-                            .build()
-            );
-            assertEquals("Initial total is required", ex.getMessage());
-        }
-    }
+        @Nested
+        @DisplayName("full lifecycle")
+        class Lifecycle {
 
-    // ### markAsPaid ######################################################
+            @Test
+            @DisplayName("PENDING -> PAID -> COMPLETED is the valid success path")
+            void successPath() {
+                Order order = buildOrder();
 
-    @Nested
-    @DisplayName("markAsPaid()")
-    class MarkAsPaid {
+                assertEquals(OrderStatus.PENDING, order.getStatus());
 
-        @Test
-        @DisplayName("transitions PENDING -> PAID")
-        void transitionsPendingToPaid() {
-            Order order = buildOrder(); // PENDING
+                order.markAsPaid();
+                assertEquals(OrderStatus.PAID, order.getStatus());
 
-            order.markAsPaid();
+                order.markAsCompleted();
+                assertEquals(OrderStatus.COMPLETED, order.getStatus());
+            }
 
-            assertEquals(OrderStatus.PAID, order.getStatus());
-        }
+            @Test
+            @DisplayName("total is unchanged across the full lifecycle")
+            void totalDoesNotChangeAcrossTransitions() {
+                var expectedTotal = new Money(100_00, "PLN");
+                Order order = buildOrder();
 
-        @Test
-        @DisplayName("throws BusinessRuleException when already PAID")
-        void throwsWhenAlreadyPaid() {
-            Order order = buildOrder();
-            order.markAsPaid(); // PAID
+                order.markAsPaid();
+                order.markAsCompleted();
 
-            var ex = assertThrows(BusinessRuleException.class, order::markAsPaid);
-
-            assertEquals(OrderErrorCode.ORDER_STATUS_INVALID_TRANSITION.name(), ex.getErrorCode());
-            assertTrue(ex.getMessage().contains("PAID"));
-        }
-
-        @Test
-        @DisplayName("throws BusinessRuleException when already COMPLETED")
-        void throwsWhenCompleted() {
-            Order order = buildOrder();
-            order.markAsPaid();
-            order.markAsCompleted(); // COMPLETED
-
-            var ex = assertThrows(BusinessRuleException.class, order::markAsPaid);
-
-            assertEquals(OrderErrorCode.ORDER_STATUS_INVALID_TRANSITION.name(), ex.getErrorCode());
-        }
-    }
-
-    // ### markAsCompleted ######################################################
-
-    @Nested
-    @DisplayName("markAsCompleted()")
-    class MarkAsCompleted {
-
-        @Test
-        @DisplayName("transitions PAID -> COMPLETED")
-        void transitionsPaidToCompleted() {
-            Order order = buildOrder();
-            order.markAsPaid(); // PAID
-
-            order.markAsCompleted();
-
-            assertEquals(OrderStatus.COMPLETED, order.getStatus());
-        }
-
-        @Test
-        @DisplayName("throws BusinessRuleException when still PENDING")
-        void throwsWhenPending() {
-            Order order = buildOrder(); // PENDING
-
-            var ex = assertThrows(BusinessRuleException.class, order::markAsCompleted);
-
-            assertEquals(OrderErrorCode.ORDER_STATUS_INVALID_TRANSITION.name(), ex.getErrorCode());
-            assertTrue(ex.getMessage().contains("PENDING"));
-            assertTrue(ex.getMessage().contains("COMPLETED"));
-        }
-
-        @Test
-        @DisplayName("throws BusinessRuleException when already COMPLETED")
-        void throwsWhenAlreadyCompleted() {
-            Order order = buildOrder();
-            order.markAsPaid();
-            order.markAsCompleted(); // COMPLETED
-
-            var ex = assertThrows(BusinessRuleException.class, order::markAsCompleted);
-
-            assertEquals(OrderErrorCode.ORDER_STATUS_INVALID_TRANSITION.name(), ex.getErrorCode());
-        }
-    }
-
-    // ### full lifecycle ######################################################
-
-    @Nested
-    @DisplayName("full lifecycle")
-    class Lifecycle {
-
-        @Test
-        @DisplayName("PENDING -> PAID -> COMPLETED is the valid success path")
-        void successPath() {
-            Order order = buildOrder();
-
-            assertEquals(OrderStatus.PENDING, order.getStatus());
-
-            order.markAsPaid();
-            assertEquals(OrderStatus.PAID, order.getStatus());
-
-            order.markAsCompleted();
-            assertEquals(OrderStatus.COMPLETED, order.getStatus());
-        }
-
-        @Test
-        @DisplayName("total is unchanged across the full lifecycle")
-        void totalDoesNotChangeAcrossTransitions() {
-            var expectedTotal = new Money(100_00, "PLN");
-            Order order = buildOrder();
-
-            order.markAsPaid();
-            order.markAsCompleted();
-
-            assertEquals(expectedTotal, order.getTotal());
+                assertEquals(expectedTotal, order.getTotal());
+            }
         }
     }
 }

@@ -32,7 +32,6 @@ class PaymentIdTest {
                 () -> new PaymentId(null)
         );
 
-        assertEquals("Payment ID cannot be null or empty", exception.getMessage());
         assertEquals(PaymentErrorCode.PAYMENT_ID_EMPTY_OR_NULL.name(), exception.getErrorCode());
     }
 
@@ -44,7 +43,6 @@ class PaymentIdTest {
                 () -> new PaymentId("")
         );
 
-        assertEquals("Payment ID cannot be null or empty", exception.getMessage());
         assertEquals(PaymentErrorCode.PAYMENT_ID_EMPTY_OR_NULL.name(), exception.getErrorCode());
     }
 
@@ -56,7 +54,6 @@ class PaymentIdTest {
                 () -> new PaymentId("    ")
         );
 
-        assertEquals("Payment ID cannot be null or empty", exception.getMessage()); // TODO: remove checks with error messages
         assertEquals(PaymentErrorCode.PAYMENT_ID_EMPTY_OR_NULL.name(), exception.getErrorCode());
     }
 
