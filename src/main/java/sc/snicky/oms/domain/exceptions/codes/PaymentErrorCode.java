@@ -2,6 +2,10 @@ package sc.snicky.oms.domain.exceptions.codes;
 
 public enum PaymentErrorCode {
     PAYMENT_NOT_FOUND,
+    PAYMENT_CREATION_FAILED,
+
+    PAYMENT_ALREADY_PROCESSED,
+
     PAYMENT_ID_EMPTY_OR_NULL,
 
     PAYMENT_TRANSACTION_ID_INVALID_LENGTH,
