@@ -1,6 +1,9 @@
 package sc.snicky.oms.domain.exceptions.codes;
 
 public enum OrderErrorCode {
+    ORDER_NOT_FOUND,
+    ORDER_CREATION_FAILED,
+
     ORDER_NUMBER_INVALID_LENGTH,
     ORDER_NUMBER_EMPTY_OR_NULL,
 
